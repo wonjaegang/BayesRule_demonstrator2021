@@ -3,10 +3,12 @@ import random
 
 class Settings:
     def __init__(self):
-        self.populationSize = 100
+        self.populationSize = 1000
         self.priorProbability = 0.1
         self.sensitivity = 0.9
         self.specificity = 0.8
+
+        self.simulationTime = 1000
 
 
 class Demonstrator:
@@ -43,12 +45,16 @@ class Demonstrator:
 
 
 def calculateAverage(lastAverage, n, an):
-    average = lastAverage * (n - 1) / n + an / n
-    return average
+    return lastAverage * (n - 1) / n + an / n
 
 
 if __name__ == "__main__":
     settings = Settings()
-
-    demonstrator = Demonstrator()
-    print(demonstrator)
+    average = 0
+    for loop in range(settings.simulationTime):
+        demonstrator = Demonstrator()
+        average = calculateAverage(average, loop + 1, demonstrator.posterioriProbability)
+        print(demonstrator)
+        print("Current Average Posteriori Probability: %f" % average)
+    print("="*20, "Simulation Over", "="*20)
+    print("Final Average Posteriori Probability: %f" % average)
