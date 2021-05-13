@@ -42,6 +42,11 @@ class Demonstrator:
                     self.positive_infected, self.posterioriProbability)
 
 
+def calculateAverage(lastAverage, n, an):
+    average = lastAverage * (n - 1) / n + an / n
+    return average
+
+
 if __name__ == "__main__":
     settings = Settings()
 
