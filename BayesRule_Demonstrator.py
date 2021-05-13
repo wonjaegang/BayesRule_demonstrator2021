@@ -17,6 +17,8 @@ class Demonstrator:
         self.spreadDisease()
         self.diagnosticTest()
 
+        self.posterioriProbability = self.calculate_posterioriProbability()
+
     def spreadDisease(self):
         for _ in range(settings.populationSize):
             if random.random() < settings.priorProbability:
@@ -31,8 +33,13 @@ class Demonstrator:
             if random.random() < 1 - settings.sensitivity:
                 self.positive += 1
 
+    def calculate_posterioriProbability(self):
+        return self.positive_infected / self.positive
+
     def __str__(self):
-        return "Total: {}, Infected: {}, Positive: {}".format(settings.populationSize, self.infected, self.positive)
+        return "Total: {}, Infected: {}, Positive: {}, Positive&Infected: {}, Posteriori Probability: {}"\
+            .format(settings.populationSize, self.infected, self.positive,
+                    self.positive_infected, self.posterioriProbability)
 
 
 if __name__ == "__main__":
