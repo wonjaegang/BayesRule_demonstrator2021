@@ -3,11 +3,11 @@ import random
 
 class Settings:
     def __init__(self):
-        self.populationSize = 1000
-        self.priorProbability = 0.01
+        self.priorProbability = 0.023
         self.sensitivity = 0.891
-        self.specificity = 0.953
+        self.specificity = 0.992
 
+        self.populationSize = 1000
         self.simulationTime = 1000
 
 
@@ -36,7 +36,10 @@ class Demonstrator:
                 self.positive += 1
 
     def calculate_postProbability(self):
-        return self.positive_infected / self.positive
+        if not self.positive:
+            return False
+        else:
+            return self.positive_infected / self.positive
 
     def __str__(self):
         return "Total: {}, Infected: {}, Positive: {}, Positive&Infected: {}, Post-Probability: {}"\
@@ -62,7 +65,11 @@ if __name__ == "__main__":
     average = 0
     for loop in range(settings.simulationTime):
         demonstrator = Demonstrator()
-        average = calculateAverage(average, loop + 1, demonstrator.postProbability)
+        if not demonstrator.positive:
+            print("Simulation #%d skipped due to no positive response.\n" % (loop + 1))
+            continue
+        else:
+            average = calculateAverage(average, loop + 1, demonstrator.postProbability)
 
         print("Simulation #%d" % (loop + 1))
         print(demonstrator)
