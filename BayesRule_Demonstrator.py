@@ -4,9 +4,9 @@ import random
 class Settings:
     def __init__(self):
         self.populationSize = 1000
-        self.priorProbability = 0.1
-        self.sensitivity = 0.9
-        self.specificity = 0.8
+        self.priorProbability = 0.01
+        self.sensitivity = 0.891
+        self.specificity = 0.953
 
         self.simulationTime = 1000
 
@@ -19,7 +19,7 @@ class Demonstrator:
         self.spreadDisease()
         self.diagnosticTest()
 
-        self.posterioriProbability = self.calculate_posterioriProbability()
+        self.postProbability = self.calculate_postProbability()
 
     def spreadDisease(self):
         for _ in range(settings.populationSize):
@@ -32,16 +32,20 @@ class Demonstrator:
                 self.positive += 1
                 self.positive_infected += 1
         for _ in range(settings.populationSize - self.infected):
-            if random.random() < 1 - settings.sensitivity:
+            if random.random() < 1 - settings.specificity:
                 self.positive += 1
 
-    def calculate_posterioriProbability(self):
+    def calculate_postProbability(self):
         return self.positive_infected / self.positive
 
     def __str__(self):
-        return "Total: {}, Infected: {}, Positive: {}, Positive&Infected: {}, Posteriori Probability: {}"\
+        return "Total: {}, Infected: {}, Positive: {}, Positive&Infected: {}, Post-Probability: {}"\
             .format(settings.populationSize, self.infected, self.positive,
-                    self.positive_infected, self.posterioriProbability)
+                    self.positive_infected, self.postProbability)
+
+
+def bayesRule(prior, sensitivity, specificity):
+    return sensitivity * prior / (sensitivity * prior + (1 - specificity) * (1 - prior))
 
 
 def calculateAverage(lastAverage, n, an):
@@ -50,11 +54,17 @@ def calculateAverage(lastAverage, n, an):
 
 if __name__ == "__main__":
     settings = Settings()
+    postProbability_calculated = bayesRule(settings.priorProbability, settings.sensitivity, settings.specificity)
+
     average = 0
     for loop in range(settings.simulationTime):
         demonstrator = Demonstrator()
-        average = calculateAverage(average, loop + 1, demonstrator.posterioriProbability)
+        average = calculateAverage(average, loop + 1, demonstrator.postProbability)
+
+        print("Simulation #%d" % (loop + 1))
         print(demonstrator)
-        print("Current Average Posteriori Probability: %f" % average)
+        print("Post-probability calculated by Bayes' rule: %f" % postProbability_calculated)
+        print("Current average Post-Probability: %f\n" % average)
     print("="*20, "Simulation Over", "="*20)
-    print("Final Average Posteriori Probability: %f" % average)
+    print("Post-probability calculated by Bayes' rule: %f" % postProbability_calculated)
+    print("Final average post-Probability: %f\n" % average)
