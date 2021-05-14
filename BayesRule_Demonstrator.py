@@ -44,7 +44,10 @@ class Demonstrator:
                     self.positive_infected, self.postProbability)
 
 
-def bayesRule(prior, sensitivity, specificity):
+def bayesRule():
+    prior = settings.priorProbability
+    sensitivity = settings.sensitivity
+    specificity = settings.specificity
     return sensitivity * prior / (sensitivity * prior + (1 - specificity) * (1 - prior))
 
 
@@ -54,7 +57,7 @@ def calculateAverage(lastAverage, n, an):
 
 if __name__ == "__main__":
     settings = Settings()
-    postProbability_calculated = bayesRule(settings.priorProbability, settings.sensitivity, settings.specificity)
+    postProbability_calculated = bayesRule()
 
     average = 0
     for loop in range(settings.simulationTime):
@@ -64,7 +67,8 @@ if __name__ == "__main__":
         print("Simulation #%d" % (loop + 1))
         print(demonstrator)
         print("Post-probability calculated by Bayes' rule: %f" % postProbability_calculated)
-        print("Current average Post-Probability: %f\n" % average)
+        print("Current average post-probability: %f\n" % average)
+
     print("="*20, "Simulation Over", "="*20)
     print("Post-probability calculated by Bayes' rule: %f" % postProbability_calculated)
-    print("Final average post-Probability: %f\n" % average)
+    print("Post-probability measured by simulation: %f\n" % average)
