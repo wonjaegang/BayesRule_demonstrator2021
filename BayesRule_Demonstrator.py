@@ -3,9 +3,40 @@ import random
 
 class Settings:
     def __init__(self):
-        self.priorProbability = 0.023
-        self.sensitivity = 0.891
-        self.specificity = 0.992
+        print("사후확률을 구하고자하는 진담검사를 고르시오.")
+        print("1.COVID-19: 비인두도말 PCR 법   2.COVID-19: 타액 PCR 법   3.COVID-19: 신속항원검사법   4.사용자 설정")
+        name = int(input())
+
+        # === 코로나바이러스감염증-19 관련 ===
+        # 21.05.18. 09시 기준, 국내 코로나19 확진확률: 인구 10만 명당 256명
+        # 세가지 진단검사 관련 상수 https://www.medric.or.kr/Controls/Sub.aspx?d=03&s=02&s2=01&g=TENDENCY&c&m=VIEW&i=3455
+
+        # COVID-19: 비인두도말 PCR 법
+        if name == 1:
+            self.name = "COVID-19: 비인두도말 PCR 법"
+            self.priorProbability = 0.00256
+            self.sensitivity = 0.98
+            self.specificity = 1
+        # COVID-19: 타액 PCR 법
+        elif name == 2:
+            self.name = "COVID-19: 타액 PCR 법"
+            self.priorProbability = 0.00256
+            self.sensitivity = 0.92
+            self.specificity = 1
+        # COVID-19: 신속항원검사법
+        elif name == 3:
+            self.name = "COVID-19: 신속항원검사법"
+            self.priorProbability = 0.00256
+            self.sensitivity = 0.90
+            self.specificity = 0.96
+        # 사용자 설정
+        elif name == 4:
+            self.name = "사용자 설정"
+            self.priorProbability = 0.23
+            self.sensitivity = 0.891
+            self.specificity = 0.992
+        else:
+            print("Setting value error")
 
         self.populationSize = 1000
         self.simulationTime = 1000
@@ -63,13 +94,15 @@ if __name__ == "__main__":
     postProbability_calculated = bayesRule()
 
     average = 0
+    skipped = 0
     for loop in range(settings.simulationTime):
         demonstrator = Demonstrator()
         if not demonstrator.positive:
             print("Simulation #%d skipped due to no positive response.\n" % (loop + 1))
+            skipped += 1
             continue
         else:
-            average = calculateAverage(average, loop + 1, demonstrator.postProbability)
+            average = calculateAverage(average, loop + 1 - skipped, demonstrator.postProbability)
 
         print("Simulation #%d" % (loop + 1))
         print(demonstrator)
@@ -77,5 +110,6 @@ if __name__ == "__main__":
         print("Current average post-probability: %f\n" % average)
 
     print("="*20, "Simulation Over", "="*20)
+    print("Diagnostic test: [%s]" % settings.name)
     print("Post-probability calculated by Bayes' rule: %f" % postProbability_calculated)
-    print("Post-probability measured by simulation: %f\n" % average)
+    print("Post-probability measured by simulations: %f\n" % average)
